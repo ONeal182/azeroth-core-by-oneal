@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "azerothmcp": {
+      "command": "python",
+      "args": ["C:/azerothcore/tools/azerothMCP/main.py"],
+      "cwd": "C:/azerothcore/tools/azerothMCP",
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    },
+    "clangd": {
+      "command": "node",
+      "args": ["C:/Users/kigat/AppData/Local/Temp/clangd-mcp-server/dist/index.js"],
+      "env": {
+        "CLANGD_PATH": "C:/Program Files/LLVM/bin/clangd.exe"
+      }
+    }
+  }
+}

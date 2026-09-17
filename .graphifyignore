@@ -1,0 +1,100 @@
+# Whitelist: only index C++ architecture sources
+# Using --no-gitignore requires explicit .graphifyignore control
+
+# Exclude everything by default
+*
+
+# Include .graphifyignore itself
+!.graphifyignore
+
+# Core C++ sources
+!src/
+src/*
+!src/common/
+!src/common/**
+!src/server/
+src/server/*
+!src/server/shared/
+!src/server/shared/**
+!src/server/database/
+!src/server/database/**
+!src/server/game/
+!src/server/game/**
+!src/server/apps/
+src/server/apps/*
+!src/server/apps/worldserver/
+!src/server/apps/worldserver/**
+
+# Exclude dungeon/boss scripts
+src/server/scripts/
+
+# All modules
+!modules/
+!modules/**
+
+# Within allowed paths, exclude non-C++ and tooling
+**/*.sh
+**/*.bash
+**/*.py
+**/*.go
+**/*.js
+**/*.ts
+**/*.php
+**/*.md
+**/README*
+**/*_test.cpp
+**/*_tests.cpp
+**/test/
+**/tests/
+
+# Build artifacts and generated files
+build/
+build-*/
+CMakeFiles/
+*.sln
+*.vcxproj*
+*.generated.*
+graphify-out/
+graphify-out.backup-old/
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Dependencies
+deps/
+node_modules/
+venv/
+
+# Tools
+tools/
+apps/
+var/
+src/tools/
+
+# Test/CI infrastructure
+e2e/
+.github/
+.git/
+
+# Data files
+data/
+*.dbc
+*.db2
+
+# Logs and caches
+logs/
+*.log
+.cache/
+
+# IDE
+.vscode/
+.idea/
+.opencode/
+.devcontainer/
+.agents/
+.atlas/
+.claude/
+docs/
+doc/

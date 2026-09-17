@@ -1,0 +1,53 @@
+# Build artifacts
+build/
+build-*/
+CMakeFiles/
+*.sln
+*.vcxproj*
+
+# Dependencies
+deps/
+node_modules/
+venv/
+
+# Scripts (too much noise for architecture graph)
+src/server/scripts/
+
+# Tests
+tests/
+**/test/
+**/*_test.cpp
+**/*_tests.cpp
+
+# Generated
+*.generated.*
+
+# Docs
+docs/
+README*
+*.md
+
+# Git
+.git/
+.github/
+
+# Data files
+data/
+*.dbc
+*.db2
+
+# Binaries
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Logs and caches
+logs/
+*.log
+.cache/
+
+# IDE
+.vscode/
+.idea/
