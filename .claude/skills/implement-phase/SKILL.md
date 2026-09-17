@@ -54,6 +54,40 @@ Do not:
 
 Small engineering work required to complete or verify the requested phase is allowed.
 
+# Subagents
+
+For complex phases with independent investigation workstreams, use 2-3 focused
+subagents.
+
+When spawning investigation subagents, prefer the project agent:
+
+`azeroth-researcher`
+
+This agent is configured to use:
+
+`claude-sonnet-5[1m]`
+
+Do not substitute a cheaper/different model for AzerothCore investigation unless
+the user explicitly requests it.
+
+Subagents should:
+- investigate one narrowly defined workstream;
+- return concise evidence and relevant symbols/files;
+- avoid large logs/source dumps;
+- normally avoid final implementation.
+
+The main agent should:
+1. collect findings;
+2. resolve conflicts;
+3. determine the minimum implementation surface;
+4. perform final integration and edits;
+5. build and verify.
+
+Do not use subagents for simple symbol lookups, trivial edits, or ordinary compile
+errors.
+
+Do not allow multiple subagents to edit overlapping files concurrently.
+
 # Before editing
 
 Confirm the current repository state.
