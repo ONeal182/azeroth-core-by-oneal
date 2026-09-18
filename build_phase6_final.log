@@ -1,0 +1,66 @@
+Версия MSBuild 17.14.51+25f168cee для .NET Framework
+
+  1>Checking Build System
+  argon2.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\argon2\RelWithDebInfo\argon2.lib
+  fmt.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\fmt\RelWithDebInfo\fmt.lib
+  zlib.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\zlib\RelWithDebInfo\zlib.lib
+  libsidecar.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\libsidecar\RelWithDebInfo\libsidecar.lib
+  Detour.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\recastnavigation\Detour\RelWithDebInfo\Detour.lib
+  sfmt.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\SFMT\RelWithDebInfo\sfmt.lib
+  g3dlib.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\g3dlite\RelWithDebInfo\g3dlib.lib
+  gsoap.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\gsoap\RelWithDebInfo\gsoap.lib
+  lualib.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\modules\mod-ale\src\lualib\lua\RelWithDebInfo\lua52.lib
+  common.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\src\common\RelWithDebInfo\common.lib
+  database.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\src\server\database\RelWithDebInfo\database.lib
+  shared.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\src\server\shared\RelWithDebInfo\shared.lib
+  scripts.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\src\server\scripts\RelWithDebInfo\scripts.lib
+  Phase5Trade.cpp
+  Phase6Groups.cpp
+  game.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\src\server\game\RelWithDebInfo\game.lib
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(152,20): error C2039: "AnyPlayerInObjectRangeCheck": не является членом "Acore". [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+      C:\azerothcore\azerothcore-wotlk\src\server\game\Spells\Spell.h(809,11):
+       см. объявление "Acore"
+  
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(152,20): error C2065: AnyPlayerInObjectRangeCheck: необъявленный идентификатор [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(152,48): error C2146: синтаксическая ошибка: отсутствие ";" перед идентификатором "checker" [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(152,48): error C3861: checker: идентификатор не найден [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(153,20): error C2039: "PlayerListSearcher": не является членом "Acore". [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+      C:\azerothcore\azerothcore-wotlk\src\server\game\Spells\Spell.h(809,11):
+       см. объявление "Acore"
+  
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(153,46): error C2039: "AnyPlayerInObjectRangeCheck": не является членом "Acore". [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+      C:\azerothcore\azerothcore-wotlk\src\server\game\Spells\Spell.h(809,11):
+       см. объявление "Acore"
+  
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(153,46): error C2065: AnyPlayerInObjectRangeCheck: необъявленный идентификатор [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(153,20): error C2065: PlayerListSearcher: необъявленный идентификатор [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(154,40): error C2065: checker: необъявленный идентификатор [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(153,75): error C3861: searcher: идентификатор не найден [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(155,40): error C2065: searcher: необъявленный идентификатор [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(464,16): error C2039: "AnyPlayerInObjectRangeCheck": не является членом "Acore". [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+      C:\azerothcore\azerothcore-wotlk\src\server\game\Spells\Spell.h(809,11):
+       см. объявление "Acore"
+  
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(464,16): error C2065: AnyPlayerInObjectRangeCheck: необъявленный идентификатор [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(464,44): error C2146: синтаксическая ошибка: отсутствие ";" перед идентификатором "checker" [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(464,44): error C3861: checker: идентификатор не найден [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(465,16): error C2039: "PlayerListSearcher": не является членом "Acore". [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+      C:\azerothcore\azerothcore-wotlk\src\server\game\Spells\Spell.h(809,11):
+       см. объявление "Acore"
+  
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(465,42): error C2039: "AnyPlayerInObjectRangeCheck": не является членом "Acore". [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+      C:\azerothcore\azerothcore-wotlk\src\server\game\Spells\Spell.h(809,11):
+       см. объявление "Acore"
+  
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(465,42): error C2065: AnyPlayerInObjectRangeCheck: необъявленный идентификатор [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(465,16): error C2065: PlayerListSearcher: необъявленный идентификатор [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(466,36): error C2065: checker: необъявленный идентификатор [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(465,71): error C3861: searcher: идентификатор не найден [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(467,36): error C2065: searcher: необъявленный идентификатор [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(502,18): error C2196: значение варианта выбора "2" уже используется [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(591,13): error C2065: sGroupMgr: необъявленный идентификатор [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(604,13): error C2065: sGroupMgr: необъявленный идентификатор [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\Phase6Groups.cpp(736,44): error C2039: "RecordInteraction": не является членом "BotInteractions::InteractionMemoryMgr". [C:\azerothcore\azerothcore-wotlk\build\modules\modules.vcxproj]
+      C:\azerothcore\azerothcore-wotlk\modules\mod-playerbot-interactions\src\InteractionMemory.h(62,11):
+       см. объявление "BotInteractions::InteractionMemoryMgr"
+  

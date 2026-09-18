@@ -1,0 +1,19 @@
+Версия MSBuild 17.14.51+25f168cee для .NET Framework
+
+  argon2.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\argon2\RelWithDebInfo\argon2.lib
+  fmt.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\fmt\RelWithDebInfo\fmt.lib
+  zlib.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\zlib\RelWithDebInfo\zlib.lib
+  libsidecar.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\libsidecar\RelWithDebInfo\libsidecar.lib
+  Detour.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\recastnavigation\Detour\RelWithDebInfo\Detour.lib
+  g3dlib.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\g3dlite\RelWithDebInfo\g3dlib.lib
+  gsoap.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\gsoap\RelWithDebInfo\gsoap.lib
+  sfmt.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\deps\SFMT\RelWithDebInfo\sfmt.lib
+  lualib.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\modules\mod-ale\src\lualib\lua\RelWithDebInfo\lua52.lib
+  common.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\src\common\RelWithDebInfo\common.lib
+  database.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\src\server\database\RelWithDebInfo\database.lib
+  shared.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\src\server\shared\RelWithDebInfo\shared.lib
+  game.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\src\server\game\RelWithDebInfo\game.lib
+  scripts.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\src\server\scripts\RelWithDebInfo\scripts.lib
+  modules.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\modules\RelWithDebInfo\modules.lib
+     Создается библиотека C:/azerothcore/azerothcore-wotlk/build/src/server/apps/RelWithDebInfo/worldserver.lib и объект C:/azerothcore/azerothcore-wotlk/build/src/server/apps/RelWithDebInfo/worldserver.exp
+  worldserver.vcxproj -> C:\azerothcore\azerothcore-wotlk\build\bin\RelWithDebInfo\worldserver.exe
