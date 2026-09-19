@@ -137,3 +137,6 @@ e2e/go.work.sum
 
 .cache
 compile_commands.json
+
+# Playerbot name migrator backup dumps
+tools/playerbot-name-migrator/*backup*.csv
