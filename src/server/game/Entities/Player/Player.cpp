@@ -191,7 +191,7 @@ Player::Player(WorldSession* session): Unit(), m_mover(this), _cinematicMgr(*thi
     m_zoneUpdateId = uint32(-1);
     m_zoneUpdateTimer = 0;
 
-    m_nextSave = sWorld->getIntConfig(CONFIG_INTERVAL_SAVE);
+    m_nextSave = GetSaveInterval();
 
     m_areaUpdateId = 0;
     m_team = TEAM_NEUTRAL;

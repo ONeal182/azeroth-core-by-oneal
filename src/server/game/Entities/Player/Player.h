@@ -2409,6 +2409,10 @@ public:
     [[nodiscard]] uint32 GetSaveTimer() const { return m_nextSave; }
     void SetSaveTimer(uint32 timer) { m_nextSave = timer; }
 
+    // Real players (not bots) use PlayerSaveInterval.RealPlayer when set (> 0);
+    // bots and the fallback case use PlayerSaveInterval.
+    [[nodiscard]] uint32 GetSaveInterval() const;
+
     // Recall position
     uint32 m_recallMap;
     float  m_recallX;

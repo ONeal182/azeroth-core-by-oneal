@@ -1805,6 +1805,14 @@ Trial.Restriction.Queue = 1
 PlayerSaveInterval = 900000
 
 #
+#    PlayerSaveInterval.RealPlayer
+#        Description: Overrides PlayerSaveInterval for real (non-bot) players only.
+#                      Bot-controlled characters always keep using PlayerSaveInterval.
+#        Default:     0 - (disabled, real players use PlayerSaveInterval too)
+
+PlayerSaveInterval.RealPlayer = 0
+
+#
 #    PlayerSave.Stats.MinLevel
 #        Description: Minimum level for saving character stats in the database for external usage.
 #        Default:     0  - (Disabled, Do not save character stats)

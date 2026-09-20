@@ -7218,6 +7218,15 @@ bool Player::_LoadHomeBind(PreparedQueryResult result)
 /***                   SAVE SYSTEM                     ***/
 /*********************************************************/
 
+uint32 Player::GetSaveInterval() const
+{
+    uint32 const realPlayerInterval = sWorld->getIntConfig(CONFIG_INTERVAL_SAVE_REALPLAYER);
+    if (realPlayerInterval && GetSession() && !GetSession()->IsBot())
+        return realPlayerInterval;
+
+    return sWorld->getIntConfig(CONFIG_INTERVAL_SAVE);
+}
+
 void Player::SaveToDB(bool create, bool logout)
 {
     CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
@@ -7230,7 +7239,7 @@ void Player::SaveToDB(bool create, bool logout)
 void Player::SaveToDB(CharacterDatabaseTransaction trans, bool create, bool logout)
 {
     // delay auto save at any saves (manual, in code, or autosave)
-    m_nextSave = sWorld->getIntConfig(CONFIG_INTERVAL_SAVE);
+    m_nextSave = GetSaveInterval();
 
     //lets allow only players in world to be saved
     if (IsBeingTeleportedFar())
