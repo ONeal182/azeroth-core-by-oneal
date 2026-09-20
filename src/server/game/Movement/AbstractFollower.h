@@ -20,6 +20,8 @@
 
 class Unit;
 
+#include "UnitUtils.h"
+
 class AbstractFollower
 {
 public:
@@ -30,7 +32,11 @@ public:
     [[nodiscard]] Unit* GetTarget() const { return _target; }
 
 private:
-    Unit* _target = nullptr;
+    // SafeUnitPointer (not a raw Unit*): auto-nulled by Unit::HandleSafeUnitPointersOnDelete()
+    // when the target is destroyed, even if Unit::RemoveAllFollowers()/FollowerRemoved() never
+    // ran for this follower (e.g. target freed outside the normal RemoveFromWorld() path).
+    // Without this, ~AbstractFollower() can dereference a dangling _target -> ACCESS_VIOLATION.
+    SafeUnitPointer _target{nullptr};
 };
 
 #endif
