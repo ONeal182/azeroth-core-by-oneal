@@ -26,6 +26,8 @@ Search exact symbols directly with `rg`.
 
 Never run repository-wide searches with broad terms or large OR-patterns.
 
+
+
 Bad:
 
 `PlayerBot|IsBot|playerbots`
@@ -53,13 +55,41 @@ Hard budget before the first edit:
 
 A failed search or read counts toward the budget.
 
+Search variants for the same concept count toward the same limit.
+
+For one missing API or mechanism:
+- perform at most 2 focused searches;
+- do not continue guessing API names;
+- do not broaden into synonym searches;
+- after 2 failed searches, inspect one likely owning header/source file;
+- if still unresolved, stop and report that unresolved fact.
+
 When a search returns one valid public API/predicate usage:
 - treat it as sufficient evidence;
 - do not search for additional examples;
 - do not repeat the same concept with alternate regexes;
 - do not investigate how it is internally populated unless correctness depends on it.
 
+Once an exact hook or API declaration has been found, do not search for that symbol again.
+
+One declaration plus one suitable usage is sufficient.
+Do not verify the same fact through another call path.
+
 A valid public predicate plus one existing usage closes that research question.
+
+Track resolved facts during the task.
+
+Once a fact is resolved, never search or read for that fact again.
+
+Resolved examples:
+- login hook found -> do not search login hooks again;
+- GM-message API found -> do not search messaging APIs again;
+- bot predicate found -> do not inspect its declaration again unless the patch depends on internals.
+
+Before every additional search/read, ask:
+"What unresolved implementation-blocking fact will this operation answer?"
+
+If none, do not run the operation.
 
 Do not inspect how that predicate is implemented, populated, or assigned unless
 the requested patch directly depends on those internals.
@@ -74,20 +104,59 @@ after a suitable public API has already been identified.
 
 Do not search for a second implementation after one valid implementation is found.
 
+For small tasks, do not search for a more semantically ideal file after a valid
+existing integration point has been found.
+
+The first valid integration point that satisfies the task closes the file-selection question.
+
+Do not:
+- search for alternative candidate files;
+- compare multiple valid files;
+- use Jev to choose between valid files;
+- reread rejected alternatives.
+
+Jev must not be used to override a deterministic small-task rule.
+
+Once all required facts are known:
+- choose the smallest suitable existing integration point;
+- make the patch;
+- do not compare alternative files/modules unless the first choice is invalid.
+
 Once the required hook/API/predicate is known, the next action MUST be an edit,
 unless one additional fact is strictly required to write the patch correctly.
 
 Do not perform another search merely to increase confidence.
 
+The search budget is a hard stop.
+
+When the budget is exhausted:
+- if the required facts are known, edit immediately;
+- otherwise stop and report the single unresolved fact.
+
+Do not exceed the budget to find a cleaner or more elegant implementation.
+
 If one genuine ambiguity remains after the budget:
 - use Jev once if it can decide whether further investigation is justified;
-- otherwise perform one additional targeted search.
+- otherwise perform one additional targeted search only when correctness depends on it.
 
-Do not exceed the budget merely to increase confidence.
 
 Target flow:
 
 `focused rg -> relevant read -> patch`
+
+### Hard stop enforcement
+
+For a small task, the operation budget overrides the desire to find a better implementation.
+
+After 6 total search/read operations:
+- repository search is forbidden for the remainder of the task;
+- if the required facts are known, edit immediately;
+- if one required fact is unknown, stop and report exactly that fact;
+- do not browse alternative files;
+- do not compare candidate implementations;
+- do not perform additional API discovery.
+
+This is a hard stop, not guidance.
 
 ### Broader codebase workflow
 
@@ -95,6 +164,7 @@ Use this workflow for medium/large tasks, architecture questions,
 cross-subsystem changes, or when the small-task fast path is insufficient.
 
 1. If `graphify-out/graph.json` exists, attempt:
+
    `graphify query "<question>"`
 
 2. Do not glob/search Graphify files before trying the query.
@@ -104,11 +174,15 @@ cross-subsystem changes, or when the small-task fast path is insufficient.
    - do not retry Graphify for the same question.
 
 4. Use:
+
    `graphify path "<A>" "<B>"`
+
    only when relationships between components are actually relevant.
 
 5. Use:
+
    `graphify explain "<concept>"`
+
    only for focused architectural concepts.
 
 6. Use `rg` for:
@@ -151,6 +225,7 @@ because that produces fewer changed files.
 
 Before changing code:
 - identify the existing hook/API/pattern;
+- identify required guard/exclusion conditions;
 - find one nearby usage when useful;
 - reuse the existing mechanism.
 
@@ -182,12 +257,21 @@ After a successful edit on a small task:
 - do not re-investigate APIs/predicates already accepted before the edit;
 - do not trace implementation internals merely to validate an already-used public API;
 - do not search for alternative implementations;
-- do not use Inspect/review-style exploration unless the edit itself failed or the user requested review.
+- do not use review-style exploration unless the edit failed or the user requested review.
+
+Verification after a small edit is limited to:
+- inspect the scoped diff for files changed by the current task;
+- optionally inspect the immediately edited lines;
+- build/test only if explicitly requested.
+
+If the edit applied successfully and no required verification remains, finish the task.
 
 Verification after a small edit is limited to:
 - inspect the diff of files changed by the current task;
 - optionally inspect the immediately edited lines;
 - build/test only if explicitly requested.
+
+If the requested change already exists in the scoped diff, treat the task as complete and stop.
 
 If the edit applied successfully and no required verification remains, finish the task.
 
@@ -249,8 +333,8 @@ When requested:
 - do not load or print full build logs;
 - fix the relevant error and retry.
 
-For player-visible behavior, prefer live-stack e2e when the local
-auth + world + MySQL stack is available.
+For player-visible behavior, prefer live-stack e2e when explicitly requested
+and when the local auth + world + MySQL stack is available.
 
 Do not create e2e for unit-sized logic.
 
@@ -274,6 +358,16 @@ Treat these as immutable:
 - `data/sql/updates/db_*/`
 
 ## Jev
+
+Do not use Jev when the skill already defines a deterministic action.
+
+Examples:
+- first valid integration point found -> use it;
+- public API already found -> use it;
+- hard search budget reached -> follow the budget rule.
+
+Jev is only for genuine unresolved ambiguity, not for reconsidering a decision
+already settled by the workflow.
 
 Jev is a cheap decision tool, not a source of repository facts.
 
@@ -357,13 +451,33 @@ Do not generate additional analysis merely to justify an already clear action.
 
 Stop when the requested task is complete and sufficiently verified.
 
+### Diff discipline
+
+The repository may already contain unrelated user changes.
+
+Never run an unrestricted `git diff` for a small task.
+
+Track the files changed by the current task and inspect only those files:
+
+`git diff -- <changed-file>`
+
+Do not load unrelated pre-existing diffs into context.
+
+Do not review or modify unrelated dirty files.
+
+Do not infer that an unchanged line/file is committed.
+Only describe Git state that was directly verified.
+
 ## Graph update
 
 After modifying code, when `graphify-out/graph.json` exists, run:
 
 `graphify update .`
 
-unless the task explicitly does not require repository graph updates.
+only when:
+- Graphify was relevant to the task;
+- the change is not a temporary/test patch;
+- the user did not request a minimal no-extra-work task.
 
 For small test patches or explicitly temporary changes, do not update Graphify
 unless requested.

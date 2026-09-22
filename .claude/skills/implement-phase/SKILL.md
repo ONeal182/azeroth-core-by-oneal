@@ -37,6 +37,13 @@ Read:
 
 Do not load the whole repository for context.
 
+Do not load the entire implementation plan into context unless required.
+
+For the current phase:
+- read only the phase section;
+- read previous phases only for dependencies;
+- do not analyze future phases.
+
 If the requested phase does not exist, stop and report it.
 
 If a prerequisite phase is clearly incomplete and blocks this phase, report the blocker instead of implementing around it.
@@ -88,7 +95,40 @@ Keep context small:
 - do not reread unchanged files without reason;
 - do not load raw Graphify JSON/HTML for ordinary work.
 
+## AzerothMCP usage
+
+
+Use AzerothMCP for game data and runtime information.
+
+Prefer AzerothMCP over source search for:
+
+- NPC entries;
+- creature templates;
+- item IDs;
+- spell IDs;
+- quests;
+- achievements;
+- maps;
+- loot;
+- SmartAI;
+- database-backed game data;
+- runtime state checks.
+
+Do not search source code for static game data when AzerothMCP can provide the answer.
+
+Use source code investigation when:
+- implementing behavior;
+- finding hooks;
+- changing server logic;
+- modifying modules.
+
 ## Before editing
+
+Before implementing a phase:
+
+- check existing feature documentation if it exists;
+- treat it as the current implementation state;
+- update it after successful completion.
 
 Confirm the repository state.
 
@@ -120,6 +160,24 @@ If a core change is required:
 
 Do not create parallel managers/schedulers/services when an existing subsystem can be extended safely.
 
+## Architecture restraint
+
+Do not redesign the architecture described in the plan.
+
+Prefer:
+- existing AzerothCore patterns;
+- simple module APIs;
+- direct phase-scoped implementations.
+
+Do not introduce:
+- generic frameworks;
+- plugin systems;
+- event buses;
+- managers/services;
+- abstractions for future phases
+
+unless the current phase requires them.
+
 ## Test-first workflow
 
 For executable behavior changes and bug fixes:
@@ -150,6 +208,25 @@ Implement the phase tasks with the minimum necessary changes.
 
 Keep behavior focused on the plan.
 
+## Tracer bullet rule
+
+For the first implementation phase of a new system:
+
+Prefer a tracer bullet implementation.
+
+Do not build all planned abstractions first.
+
+Implement:
+
+- one real trigger;
+- one real reward path;
+- one persistence path;
+- one verification path.
+
+Expand only after the tracer bullet works
+
+
+
 While editing C++ code, consider when relevant:
 
 - object lifetime;
@@ -179,6 +256,12 @@ For DB work:
 - verify the actual schema first;
 - use normal AzerothCore/module migration mechanisms;
 - avoid destructive operations unless explicitly approved.
+
+For module SQL:
+
+- follow existing module migration structure;
+- inspect a similar module before creating new SQL layout;
+- do not invent naming conventions if an existing module pattern exists.
 
 Do not use production/runtime DB data as a substitute for migrations.
 
@@ -279,6 +362,41 @@ Before declaring the phase complete:
 8. perform a focused regression check when the change plausibly affects completed phases.
 
 If compile fixes touched earlier/later phases, explicitly classify and justify each such change.
+
+## Phase documentation
+
+After completing a phase, update phase documentation.
+
+Create or update:
+
+`.agents/docs/features/<feature-name>/`
+
+Structure:
+
+- `overview.md` — current system architecture and purpose;
+- `phase-status.md` — completed phases, current phase, remaining phases;
+- `decisions.md` — important technical decisions and reasons;
+- `api.md` — public APIs, hooks, commands, configs;
+- `database.md` — created tables, fields, migrations.
+
+Documentation rules:
+
+- Document only what was actually implemented.
+- Do not document future planned behavior as completed.
+- Do not copy the entire PRD.
+- Do not paste large code blocks.
+- Prefer short factual descriptions.
+
+After each completed phase:
+- update the affected documentation;
+- record changed files;
+- record verification results;
+- record known limitations/blockers.
+
+Before starting a new phase:
+- read only the relevant feature documentation;
+- use it as the current implementation state;
+- do not rediscover already documented architecture unless the code contradicts it.
 
 ## Definition of Done
 
