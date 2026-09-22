@@ -1,64 +1,40 @@
 # AGENTS.md
 
-AzerothCore is a C++ MMORPG server emulator for World of Warcraft 3.3.5a (WotLK), built with CMake, backed by MySQL.
+AzerothCore is a C++ World of Warcraft 3.3.5a server emulator using CMake and MySQL.
 
-## Agent rules
+## Global rules
 
-- **Do not configure or build unless explicitly asked.** Builds are slow and rarely needed for code changes.
-- **Never edit SQL files outside `data/sql/updates/pending_db_*/` unless explicitly requested.** `data/sql/base/`, `data/sql/archive/`, and `data/sql/updates/db_*/` are immutable.
-- Formatting follows `.editorconfig`: UTF-8, LF, max 120 cols, trailing newline, no trailing whitespace; 4-space indent for C++ (tabs forbidden), 2-space for JSON/YAML/sh/ts/js.
-- **Prefer live-stack e2e to debug/validate player-visible behaviour** when a local auth+world+MySQL stack is available (protocol, combat, quests, loot, death, multi-bot). See `e2e/README.md` and AzerothGhost `e2e/LLM_GUIDE.md`. Do not invent e2e for pure unit-sized logic — see `.agents/docs/e2e-policy.md`.
-- **Scratch e2e only under `e2e/local/`** (gitignored). Never commit throwaway debug tests. Promote keepers into `e2e/suites/` or `e2e/smoke/`.
-- Planning docs go in `.agents/plans/<task-slug>/` (gitignored), named `<task-slug>.<TYPE>.md` (`PLAN`, `REQUIREMENTS`, `ANALYSIS`, …).
+For any non-trivial AzerothCore codebase task, load and follow:
 
-## Mandatory reading per task
+`.agents/skills/azerothcore/SKILL.md`
 
-Read the matching doc(s) BEFORE starting the task:
+Do not configure, build, or run tests unless explicitly requested.
+When requested, use the smallest relevant target.
 
-- Compiling, configuring, or running tests → `.agents/docs/build.md`
-- Writing or modifying C++ → `.agents/docs/cpp-guidelines.md`
-  - Script work (under `src/server/scripts/`) → also `.agents/docs/cpp-scripts.md`
-- Creating or modifying SQL → `.agents/docs/sql-guidelines.md`
-  - SmartAI work (`smart_scripts` data) → also `.agents/docs/cpp-scripts.md`
-- Reviewing a changeset or PR → `.agents/docs/code-review.md`
-- Self-reviewing, or opening or updating a PR → also `.agents/docs/self-review-rules.md`
-- Touching a subsystem that has a doc in `.agents/docs/systems/` → read that doc too
-- Writing, debugging, or changing live-stack e2e (`e2e/`) → `e2e/README.md`, `.agents/docs/e2e-policy.md`, and AzerothGhost `e2e/LLM_GUIDE.md` (scratch work → `e2e/local/`)
-- Capturing a lesson or adding/updating agent docs → `.agents/docs/README.md`
+Never edit SQL outside `data/sql/updates/pending_db_*/` unless explicitly requested.
+Treat `data/sql/base/`, `data/sql/archive/`, and `data/sql/updates/db_*/` as immutable.
 
-## Repository layout
+Follow `.editorconfig`:
+UTF-8, LF, max 120 columns, trailing newline, no trailing whitespace.
+Use 4 spaces for C++; 2 spaces for JSON/YAML/sh/ts/js.
 
-- `src/common/` — networking (Asio), crypto, config, logging, shared utilities.
-- `src/server/game/` — core gameplay; compiled into worldserver.
-- `src/server/scripts/` — content scripts grouped by region (`EasternKingdoms/`, `Northrend/`, …), class (`Spells/spell_mage.cpp`, …), and domain (`Commands/`, `Pet/`, `OutdoorPvP/`, `World/`).
-- `src/server/database/` — DB abstraction and schema updater.
-- `src/server/shared/` — code shared by auth and world servers.
-- `src/server/apps/{authserver,worldserver}/` — entry points (ports 3724 and 8085).
-- `src/test/` — unit tests + mocks.
-- `e2e/` — live-stack Go e2e (AzerothGhost harness); see `e2e/README.md`. Scratch/debug tests: `e2e/local/` (gitignored).
-- `data/sql/` — `base/` (historical schema), `updates/db_*/` (merged), `updates/pending_db_*/` (in-flight), `custom/` (gitignored).
-- `modules/` — external modules (see below).
-- `apps/` — helper scripts; `apps/codestyle/` holds the lint scripts.
-- `conf/dist/` — distributed config templates; `conf/*.conf` is gitignored.
-- `deps/` — vendored third-party dependencies.
+Make the smallest viable patch.
+Reuse existing AzerothCore hooks, APIs, patterns, and architecture.
+Do not create new architecture when an existing mechanism is sufficient.
+Do not modify unrelated code.
 
-## Modules
+Do not dump entire large files, diffs, or logs into context.
+Do not repeat equivalent searches or reread unchanged code without reason.
+Do not narrate routine tool calls.
+Prefer implementation over commentary once enough evidence is available.
 
-External modules live in `modules/`, each a subdir with its own `CMakeLists.txt`. Disable with `-DDISABLED_AC_MODULES="mod1;mod2"`. See `modules/how_to_make_a_module.md`.
+Stop when the requested task is complete and sufficiently verified.
 
-## Persisting lessons
+If a planning document is needed, place it under:
 
-When a user correction reveals a lesson that generalizes, offer to persist it into these docs (placement per `.agents/docs/README.md`): use the `/self-improve` skill if installed, otherwise suggest the user to install it and read this page: https://www.azerothcore.org/wiki/agentic-engineering
+`.agents/plans/<task-slug>/`
 
-## graphify
+If the user explicitly requests `/graphify`, load the AzerothCore skill first.
 
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
-
-When the user types `/graphify`, use the installed graphify skill or instructions before doing anything else.
-
-Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- Dirty graphify-out/ files are expected after hooks or incremental updates; dirty graph files are not a reason to skip graphify. Only skip graphify if the task is about stale or incorrect graph output, or the user explicitly says not to use it.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+Final responses should normally be concise:
+changed files, change made, verification result, and any unresolved issue.

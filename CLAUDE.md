@@ -1,203 +1,219 @@
-# AzerothCore Development Rules
+# AzerothCore Local-Model Development Rules
 
 ## Project
 
 - Customized AzerothCore WotLK 3.3.5a with PlayerBots and custom modules.
 - Work from the `azerothcore-wotlk` repository root and prefer relative paths.
-- Development scope includes **all of `modules/`**, not only PlayerBots.
-- Main code: `src/common/`, `src/server/game/`, `src/server/shared/`, `src/server/database/`, `src/server/apps/worldserver/`, `modules/`.
-- Respect the actual Windows/WSL environment; do not mix paths, binaries, or toolchains without verifying compatibility.
+- Scope includes `src/` and all of `modules/`.
+- Respect the current Windows/WSL toolchain; do not switch paths, generators, compilers, or environments without verifying compatibility.
 
-## Change policy
+## Core behavior
 
-- Check `git status` before significant work and preserve existing/user changes.
-- Change only what the current task requires; avoid unrelated refactors.
-- Reuse existing AzerothCore/module mechanisms before creating new managers, schedulers, or parallel systems.
+- Make the smallest change that solves the requested task.
+- Reuse existing AzerothCore/module mechanisms before creating new managers, helpers, schedulers, or parallel systems.
 - Prefer module-level changes; modify core only when reasonably necessary.
-- Do not delete functionality, add stubs, disable checks, comment out working behavior, or weaken validation merely to make a build/test pass.
-- For complex multi-file work, give a short plan first; small edits do not need planning ceremony.
-- Never commit/push, `git reset --hard`, `git clean -fd`, delete major directories, or perform broad rewrites unless explicitly requested.
-- Do not change MCP configuration, hooks, permissions, API routing, model routing, or optimization tooling during ordinary development.
-- Never expose secrets or place them in code, logs, reports, or Git.
+- Preserve existing/user changes. Check `git status` before significant work.
+- Never commit/push, `git reset --hard`, `git clean -fd`, delete major directories, or make broad rewrites unless explicitly requested.
+- Do not change MCP, hooks, permissions, model/API routing, or optimization tooling during ordinary development.
+- Never expose secrets.
 
-## Tool selection
+## Local-model discipline
 
-Choose the most precise tool for the question. This is **not** a mandatory chain.
+This session uses a local model. Minimize wandering, repeated searches, duplicated reasoning, and unnecessary tool calls.
 
-- **AzerothMCP:** DB data/schema, NPCs, items, quests, SmartAI, conditions, waypoints, spell/data lookups, and available runtime checks. Prefer specialized tools, then narrow SQL only if needed.
-- **clangd MCP:** exact C++ definitions, references, implementations, types, inheritance, call hierarchy, symbols, and diagnostics. If results look wrong, verify the compilation database/index.
-- **Graphify:** subsystem/module relationships, dependencies, architecture, and impact analysis. Query only the relevant graph region. Paths through generic primitives such as `_string`, `string`, `uint32`, `uint8`, or `int32` are not meaningful architectural evidence; verify important C++ relationships with clangd/source.
-- **Atlas CLI:** first-pass orientation in unfamiliar code. Use focused paths and ~800–1600 token budgets; do not run it before every edit.
-- **ast-grep CLI:** structural C++ patterns and controlled bulk refactors. Restrict paths, inspect matches, and preview before rewriting.
-- **rg/Grep:** literal strings, file names, config keys, SQL names, log messages, and quick exact searches.
-- **Caveman:** use compacted output when sufficient; recover exact original fragments whenever correctness depends on omitted details.
-- **ccache:** preserve an existing working integration; do not clear the cache. Inspect stats only when relevant.
+### Hard investigation budget
 
-Use only tools that are actually available and their real schemas/`--help`. If a tool is unavailable, fall back to targeted source search/read instead of repairing unrelated tooling. Empty index/search results do not prove that a symbol or dependency does not exist. Graphs, indexes, and diagnostics guide investigation but do not replace source, build, tests, or runtime verification.
+For small tasks expected to touch 1–3 files:
 
-## Installed workflow skills
+- No subagents unless the user explicitly requests one in the current message.
+- Maximum 3 broad searches.
+- Maximum 10 search/read operations before the first edit.
+- After a likely file/symbol is identified, all further searches must be path-scoped.
+- Do not repeat equivalent searches with guessed names.
+- Do not keep looking for a "better" API after a valid existing mechanism is found.
+- If the budget is exhausted, summarize the evidence, choose the most supported implementation, make the smallest patch, and let build/tests validate it.
 
-Use installed skills only when they fit the task; do not invoke them mechanically.
+For medium tasks:
 
-- **prd:** define WHAT/WHY, scope, invariants, edge cases, and acceptance criteria without prescribing implementation.
-- **plan-phase:** convert a PRD into small, verifiable AzerothCore implementation phases.
-- **implement-phase:** implement and verify exactly one plan phase, then stop.
-- **grill-me / grilling:** optional requirement/decision stress-testing before large, ambiguous, high-risk, or cross-cutting work.
-- **tdd:** default workflow for executable behavior changes and bug fixes.
-- **git-commit:** use only when the user explicitly asks to create a commit; never auto-commit.
-
-Skills do not override project safety, scope, or verification rules.
-
-## Context and token efficiency
-
-- **Do not spawn subagents unless the user explicitly requests them.**
-- Prefer Graphify, clangd, AzerothMCP, ast-grep, `rg`, and targeted reads in the main agent.
-- If the relevant file/symbol is already known, investigate it directly; skip Atlas/Graphify when unnecessary.
 - Start narrow and expand only when evidence is insufficient.
-- Read only the needed functions, declarations, and adjacent logic; avoid whole large files/directories unless required.
-- Do not repeatedly reread unchanged code or load directories "for context".
-- Do not load full `graphify-out/graph.json`, `graph.html`, huge repo maps, DB dumps, diffs, or build logs.
-- By default avoid broad exploration of `deps/`, build artifacts, and all of `src/server/scripts/`; open only relevant parts when required.
-- Do not ignore relevant tests or SQL migrations merely to save tokens.
-- Do not rebuild indexes/graphs after every edit. Update them only when stale data blocks the task.
-- Do not start paid LLM indexing or full-repository scans without separate approval.
-- Stop investigating once enough evidence exists to implement safely.
-- Correctness outranks token savings: recover exact errors, source bodies, or diff context whenever needed.
-- For long work, compact context only when needed; preserve the goal, constraints, changed files, verification results, and next step. Start unrelated major tasks in a clean context.
+- Prefer one investigation path at a time.
+- Stop investigating as soon as the hook/entry point, relevant guard/condition, and existing mechanism/API are known.
+
+### Decision checkpoint
+
+After 5 investigation operations, before searching again, determine:
+
+1. What exact fact is still unknown?
+2. Is that fact required to implement safely?
+3. Has an existing project mechanism already been found?
+4. Can build/test feedback resolve the uncertainty faster than another search?
+
+If nothing implementation-blocking remains, edit now.
+
+### Never search these by default
+
+Do not search generated/index/cache/build artifacts unless explicitly required:
+
+- `graphify-out*`
+- `build*`
+- `.git/`
+- `cache/`
+- `*.backup*`
+- generated logs
+- dependency/vendor trees
+
+Do not load full `graphify-out/graph.json`, `graph.html`, huge repo maps, DB dumps, or full build logs.
+
+## Tool order
+
+Use the most precise tool. This is guidance, not a mandatory chain.
+
+### C++ navigation
+
+1. **Graphify** — architecture, subsystem relationships, candidate files/classes.
+2. **clangd MCP** — exact definitions, references, implementations, inheritance, call hierarchy, diagnostics.
+3. **Read** — only the relevant function/declaration and nearby logic.
+4. **rg/Grep** — exact strings, usage examples, config keys, log text.
+5. **ast-grep** — structural patterns/refactors when appropriate.
+
+Once Graphify identifies candidate files and clangd/source confirms the exact symbol, stop using Graphify for that question.
+
+Do not use repository-wide grep to rediscover relationships already established by Graphify/clangd.
+
+Do not invent likely API names such as `SendAdminMessage`. Search for the required behavior or existing usage instead.
+
+### Other tools
+
+- **AzerothMCP:** DB/schema, NPCs, items, quests, SmartAI, conditions, waypoints, spells, runtime/data lookups. Prefer specialized tools; use narrow SQL only if needed.
+- **Atlas CLI:** only for first-pass orientation in genuinely unfamiliar code. Keep scope focused and token budget small.
+- **Caveman:** compact output is fine for orientation; recover exact source/errors when correctness depends on omitted detail.
+- **ccache:** preserve existing working integration; do not clear it.
+
+If a tool is unavailable or stale, fall back to targeted source reads/search. Do not repair unrelated tooling during a coding task.
+
+## Subagents
+
+Do not use the Agent tool, background agents, or subagents unless the user explicitly requests them in the current message.
+
+This applies even when parallel investigation seems useful.
+
+Perform normal repository investigation in the main agent with Graphify, clangd, Read, Grep/rg, AzerothMCP, and Bash.
+
+## Editing rule
+
+Before the first edit, identify only what is necessary:
+
+- correct hook/entry point;
+- correct existing API/mechanism;
+- required guard/exclusion conditions;
+- affected file(s).
+
+Once these are known, stop exploring and implement.
+
+For simple glue changes, prefer:
+`find hook -> find existing behavior/API -> patch -> build/test`
+
+Do not narrate or restate the plan repeatedly.
 
 ## BOT_BOT rules
 
-These rules apply to bot interaction systems.
+For bot interaction systems:
 
-- BOT_BOT interactions may **start and continue only while at least one eligible real human observer is nearby**; a human merely being online elsewhere is insufficient.
-- The observer must be a real human, not a playerbot, and must satisfy the module's map/instance/phase/distance/visibility rules.
+- BOT_BOT interactions may start and continue only while at least one eligible real human observer is nearby.
+- A human merely online elsewhere is insufficient.
+- The observer must be a real human, not a playerbot, and satisfy map/instance/phase/distance/visibility requirements.
 - Observer presence permits an otherwise valid interaction; it does not trigger one.
-- If the required common observer is lost, stop new module-owned actions and cancel/clean up at the correct safe boundary.
-- Already-started indivisible core operations may finish safely before the scene stops.
-- Bots interact through real game actions; no artificial BOT_BOT chat, textual emotes, or LLM dialogue.
-- Communication with a real human player remains allowed; an observer does not turn BOT_BOT into BOT_PLAYER.
-- Normal PlayerbotAI and unrelated background/world systems must continue without observers.
+- If the common observer is lost, stop new module-owned actions and cancel/clean up at the correct safe boundary.
+- Already-started indivisible core operations may finish safely.
+- BOT_BOT interactions use real game actions only; no artificial bot-bot chat, textual emotes, or LLM dialogue.
+- Communication with real human players remains allowed.
+- Normal PlayerbotAI and unrelated world/background systems must continue without observers.
 
 ## Database and live server
 
-- Use read-only DB access for investigation; never disable `READ_ONLY` on your own.
-- Before SQL, verify the actual table, schema, and current data; never invent custom-module table names.
-- You may prepare migrations, but apply DB changes only with explicit permission.
+- Use read-only DB access for investigation.
+- Verify real table/schema/data before SQL; do not invent table names.
+- Prepare migrations if needed, but apply DB changes only with explicit permission.
 - SOAP commands, reloads, restarts, character changes, and other live-state mutations require explicit permission.
-- SQL read-only mode does **not** protect against SOAP mutations.
 - Do not stop the server or replace live binaries/configs merely to verify a build.
 
-## Test-first development
+## Tests and verification
 
-For behavior changes and bug fixes, use test-first development by default:
+For behavior changes and bug fixes:
 
 1. Identify the behavior/regression to verify.
-2. Write or extend the smallest relevant automated test **before** production implementation.
-3. Run it and confirm it fails for the expected reason.
-4. Implement the minimum production change required to pass.
-5. Run the focused test again.
-6. Run relevant surrounding/regression tests.
-7. Build the affected target and perform runtime verification when gameplay behavior is involved.
-8. Review the final diff.
+2. Use the smallest relevant existing test if available.
+3. Add/extend a focused test when practical.
+4. Implement the minimum production change.
+5. Run focused tests.
+6. Build the affected target.
+7. Perform permitted runtime verification for gameplay behavior.
+8. Review `git diff`.
 
-If no relevant test exists, first inspect the project's existing test/integration infrastructure.
+For trivial glue changes around existing hooks/APIs, do not spend large investigation effort creating new test infrastructure. If no focused test location is immediately available, make the minimal change, compile it, and provide a deterministic runtime verification procedure.
 
-- If the behavior can reasonably be covered by existing infrastructure, add the test there.
-- If full gameplay behavior cannot reasonably be automated, define a deterministic runtime/integration verification before implementation and add the closest practical automated coverage for testable policy/pure logic.
-- Do not invent a new unrelated test framework solely for one task without explicit approval.
-- Do not report a test as PASS merely because a test file exists; it must actually execute successfully.
-- Do not weaken assertions, disable/delete failing tests, or write tests that merely mirror implementation.
-- Compilation alone is not a substitute for behavior verification.
-
-Documentation-only, generated-file-only, and tooling-configuration-only changes do not require artificial tests.
+Never weaken assertions or disable/delete failing tests just to pass.
 
 ## Build workflow
 
-- Preserve the existing build workflow. On the first necessary build, inspect the actual generator/toolchain/configuration from `CMakeCache.txt`, presets, or scripts.
-- Do not change compiler/generator or delete `build/` just to satisfy clangd/ccache.
-- Prefer incremental builds of affected targets while accounting for final worldserver linking when required.
-- Save full build output to a log and inspect only relevant diagnostic blocks; preserve the real build exit code when filtering/redirecting output.
-- Fix the first/root compiler or linker error before chasing downstream failures.
+- Preserve the existing build workflow.
+- Inspect current generator/toolchain/configuration before the first necessary build.
+- Prefer incremental builds of affected targets.
+- Save full build output to a log; inspect only relevant diagnostics while preserving the real exit code.
+- Fix the first/root compiler or linker error before downstream errors.
 - Do not hide warnings caused by the current change.
-- Do not "fix" later unfinished phases merely to make the current phase compile; prefer correct feature gating and the smallest scope-preserving build fix.
-
-## Definition of Done
-
-A task is not complete merely because code was written or compiled.
-
-Before completion:
-
-- review the final `git diff` for unrelated changes;
-- build the affected target(s);
-- run the new/changed focused tests plus relevant surrounding regression tests where applicable;
-- verify error paths, invalid/null state, cleanup, cancellation, and rollback where applicable;
-- for gameplay changes, state whether runtime behavior was actually tested;
-- classify unverified criteria honestly;
-- explicitly list anything not verified.
-
-Never claim a bug is fixed or a phase is complete if only compilation was confirmed.
+- Do not delete `build/` or switch toolchains just to make clangd/ccache happy.
 
 ## Root-cause debugging
 
-- Find and fix the root cause rather than masking symptoms.
-- Do not add retries, delays, extra guards, disabled checks, commented-out functionality, or unrelated changes without evidence that they address the cause.
-- Reproduce the issue or obtain observable evidence where practical.
-- Reject hypotheses not supported by tools/source/runtime evidence.
-- After a fix, summarize briefly: **cause → fix → verification**.
+- Fix root causes, not symptoms.
+- Do not add retries, delays, broad guards, disabled checks, or unrelated changes without evidence.
+- Reproduce or obtain observable evidence when practical.
+- Reject unsupported hypotheses.
+- After a fix, summarize briefly: cause -> fix -> verification.
 
-## Performance and hot paths
+## Performance / lifetime
 
-AzerothCore is a long-running real-time server. Be especially careful in update/tick loops, `UpdateAI`, Player/Unit/Creature, combat, movement, PlayerBots, and loops over many players/bots/objects.
+AzerothCore is a long-running real-time server.
+
+Be careful in update loops, combat, movement, Player/Unit/Creature, PlayerBots, and loops over many objects.
 
 Avoid without clear need:
 
-- DB queries inside frequent update loops;
-- full scans of large containers every tick;
-- avoidable O(n²) behavior at scale;
-- repeated computation of stable data;
-- frequent heap allocations in hot paths;
-- per-tick noisy logging;
+- DB queries in frequent loops;
+- global/full scans every tick;
+- avoidable O(n²);
+- repeated stable-data computation;
+- frequent allocations/log spam;
 - broad/global locking.
 
-Before adding a periodic module tick/update, check whether an existing scheduler/event mechanism can be reused. Prefer event-driven logic or targeted indexes over global scans. Do not prematurely optimize, but call out meaningful complexity/frequency changes.
+For raw pointers, ObjectGuid lookups, async callbacks, events/tasks, logout/despawn/map changes:
 
-## Lifetime, ownership, and concurrency
-
-Explicitly consider object lifetime for raw pointers, `ObjectGuid` lookups, Player/Creature/Unit references, logout/despawn/map changes, events/tasks, async DB callbacks, lambda captures, and shared state.
-
-- Do not retain world-object pointers longer than their lifetime is guaranteed.
-- Prefer reacquiring objects by `ObjectGuid` when lifetime across callbacks/events is uncertain.
-- Check cleanup/cancellation when owners disappear or sessions/maps change.
-- Do not add mutexes/atomics "just in case"; first determine which threads actually access the data.
+- do not retain world-object pointers beyond guaranteed lifetime;
+- reacquire by `ObjectGuid` when lifetime is uncertain;
+- verify cleanup/cancellation when owners disappear.
 
 ## Compatibility
 
-Preserve existing module/config behavior unless a breaking change is explicitly required.
+Preserve existing public APIs, config keys/semantics, DB schema/enums, commands, and data formats unless the task explicitly requires a breaking change.
 
-Without need, do not rename config keys, change config semantics, alter public module APIs, modify DB schema, change DB-persisted enum values, or change established commands/data formats. If a breaking change is required, identify it clearly and include migration steps.
+## Definition of Done
 
-## Logging and diagnostics
+Before saying a task is complete:
 
-- Add logs for diagnosis, not noise: what happened, to which entity/bot, and why a decision was accepted/rejected.
-- Avoid per-tick spam and use existing AzerothCore/module log categories where possible.
-- Remove temporary debug spam unless it has lasting diagnostic value.
-- Never log credentials, tokens, or sensitive data.
+- inspect final `git diff`;
+- verify no unrelated changes;
+- run focused tests when applicable;
+- build affected target(s);
+- report runtime verification separately;
+- state anything not verified.
 
-## Final verification
-
-After code changes:
-
-1. run the focused test(s) written/updated for the task, if applicable;
-2. run relevant regression tests;
-3. build the affected target(s);
-4. perform permitted runtime/gameplay checks when applicable;
-5. inspect `git diff` and confirm no unrelated changes.
-
-Report automated tests, build status, and runtime verification separately. Successful compilation alone does not prove gameplay behavior is correct.
+Compilation alone does not prove gameplay behavior is correct.
 
 ## Response style
 
-- Reply in Russian, briefly, using complete sentences.
-- Report: what changed, what was verified, and what remains unverified.
-- Do not narrate obvious tool/shell operations or repeat large tool outputs.
-- Never claim a tool works, a test passed, a phase is complete, or a bug is fixed without corresponding verification.
+- Reply in Russian, briefly, with complete sentences.
+- Report only: what changed, what was verified, what remains unverified.
+- Do not narrate obvious tool/shell operations.
+- Do not repeat large tool outputs.
+- Never claim a tool/test/build/runtime result without actual verification.
