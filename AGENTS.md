@@ -1,72 +1,35 @@
 # AGENTS.md
 
-AzerothCore is a C++ World of Warcraft 3.3.5a server emulator using CMake and MySQL.
+Customized AzerothCore WotLK 3.3.5a (C++/CMake/MySQL) + Playerbots + custom modules.
 
-## Global rules
+## Effort tier (pick once, first, silently)
 
-For any non-trivial AzerothCore codebase task, load and follow:
+| Tier | Examples | Load | Budget |
+|---|---|---|---|
+| T0 answer | question, lookup, ID/config value, GM command, explain a snippet | nothing | ≤3 tool calls, no plan, answer ≤5 lines |
+| T1 small change | one-file fix, hook callback, log line, command, config/SQL row | `.agents/skills/azerothcore/SKILL.md` | per skill |
+| T2 feature | new module, multi-file, cross-subsystem, unfamiliar system | skill + `PROJECT.md` | per skill |
+| Architecture only | design / integration-point question, no edits | `.agents/skills/azerothcore-architecture/SKILL.md` + `PROJECT.md` | per skill |
+| Numbered phase | "implement phase N" | `.agents/skills/implement-phase/SKILL.md` | per skill |
 
-`.agents/skills/azerothcore/SKILL.md`
+Use the lowest tier that fits. Escalate only on concrete evidence (e.g. the fix turns out to span subsystems).
+For T0/T1: no restating the task, no written plan, no deliberation between equally valid options —
+take the first valid one.
 
-The AzerothCore skill is the authoritative source for:
-- search strategy;
-- investigation budgets;
-- tool-selection workflow;
-- Jev usage;
-- post-edit stopping rules;
-- token/context discipline.
+## Hard rules
 
-Do not duplicate or override those workflow rules elsewhere.
+- Never commit, push, `git reset --hard`, `git clean -fd`, delete directories, or run destructive DB ops unless asked.
+- Preserve existing user changes. Touch only files the task needs.
+- No build, tests, server restart, SOAP mutation, or live DB write unless asked or the active phase requires it.
+- Do not change MCP config, model routing, hooks, permissions, or agent tooling unless that is the task.
+- Never print secrets.
+- Core SQL: new files only in `data/sql/updates/pending_db_*/`.
+  Never edit `data/sql/base/`, `data/sql/archive/`, `data/sql/updates/db_*/`.
+- Bot-to-bot behavior: read BOT_BOT rules in `PROJECT.md` first.
+- Style: `.editorconfig` (UTF-8, LF, 120 cols, C++ 4 spaces, JSON/YAML/sh/js 2 spaces).
 
-Do not configure, build, or run tests unless explicitly requested.
-When requested, use the smallest relevant target.
+## Output
 
-Never edit SQL outside `data/sql/updates/pending_db_*/` unless explicitly requested.
-
-Treat these as immutable:
-- `data/sql/base/`
-- `data/sql/archive/`
-- `data/sql/updates/db_*/`
-
-Follow `.editorconfig`:
-- UTF-8;
-- LF;
-- max 120 columns;
-- trailing newline;
-- no trailing whitespace;
-- C++: 4 spaces;
-- JSON/YAML/sh/ts/js: 2 spaces.
-
-Make the smallest viable patch.
-
-Reuse existing AzerothCore hooks, APIs, patterns, and architecture.
-
-Do not create new architecture when an existing mechanism is sufficient.
-
-Do not modify unrelated code.
-
-Preserve existing user changes.
-
-Never commit, push, run `git reset --hard`, run `git clean -fd`,
-or delete major project directories unless explicitly requested.
-
-Do not modify MCP configuration, model/API routing, hooks, permissions,
-or optimization tooling during ordinary coding tasks unless explicitly requested.
-
-Never expose secrets.
-
-Do not dump entire large files, diffs, or logs into context.
-
-Do not narrate routine tool calls.
-
-Stop when the requested task is complete and sufficiently verified.
-
-If a planning document is needed, place it under:
-
-`.agents/plans/<task-slug>/`
-
-Final responses should normally be concise:
-- changed files;
-- what changed;
-- verification performed;
-- anything unresolved.
+Reply in the user's language. Final report ≤8 lines:
+changed files, what changed, verification actually run, open items.
+Never report PASS for a check that did not run.
