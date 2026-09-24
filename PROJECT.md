@@ -36,6 +36,21 @@ Edit core only when no hook/extension point fits.
 - WotLK `CurrencyTypes.dbc` / `ItemExtendedCost.dbc` are client-side: no new currencies or token-vendor costs without
   a client patch. Reuse existing DBC rows or use gossip-driven logic.
 
+## Live operations
+
+For explicitly requested live game mutations:
+
+1. Prefer AzerothMCP when the required action is exposed as a tool.
+2. Otherwise use an existing console-safe GM/SOAP command.
+3. Do not inspect command implementation unless behavior is genuinely unknown.
+4. If authentication/transport fails, stop; do not fall back to direct DB mutation.
+
+Known console-safe examples:
+- `.character level <player> <n>`
+- `.tele name <player> <loc>`
+- `.player learn <player> <spell>`
+- `.achievement add <id> <player>`
+
 ## Playerbots
 
 Part of normal operation. Account for bot sessions; use existing bot checks (`WorldSession` / playerbot APIs);

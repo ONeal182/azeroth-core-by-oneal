@@ -8,6 +8,7 @@ description: >
 
 Tier comes from `AGENTS.md`. Read `PROJECT.md` only for T2, BOT_BOT, DB schema, or new-module work.
 
+
 ## T1 — small change
 
 Goal: minimum facts → patch → stop.
@@ -23,6 +24,11 @@ Goal: minimum facts → patch → stop.
    Do not compare alternatives once one is valid.
 7. Prefer ScriptMgr / PlayerScript / module hook over a core edit. No new managers, services, hooks, frameworks.
 8. After the edit: `git diff -- <file>` only. No new research, no "better" rewrite. Stop.
+
+Before editing an existing modified file:
+- check whether the relevant code already exists;
+- preserve existing user changes;
+- do not rewrite or relocate existing custom behavior.
 
 ## T2 — feature / cross-subsystem
 
@@ -42,6 +48,18 @@ Goal: minimum facts → patch → stop.
 | subsystem relationships, impact | Graphify |
 | creature / item / spell / quest / SmartAI / DB-row facts | AzerothMCP — not source search |
 | genuine choice between known valid options | Jev, once. Never for facts, never to override a rule here |
+
+### Tool availability
+
+Use an integration only when it is already available to the agent.
+
+For MCP/integration tools such as AzerothMCP or Jev:
+- if the tool is present, use it according to the table above;
+- if it is absent, do not search the filesystem or shell for an executable with the same name;
+- do not install or repair integrations during an unrelated task;
+- use the normal fallback for the task, or report the missing capability if it is required.
+
+Graphify is different: it is an existing project CLI and may be invoked through the shell.
 
 ## Docs (load only on match; `.agents/docs/` unless a path is given)
 
