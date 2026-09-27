@@ -12798,7 +12798,25 @@ void Unit::ProcSkillsAndReactives(bool isVictim, Unit* target, uint32 procFlag, 
             // On melee based hit/miss/resist/parry/dodge need to update skill (for victim and attacker)
             if (procExtra & (PROC_EX_NORMAL_HIT | PROC_EX_MISS | PROC_EX_RESIST | PROC_EX_PARRY | PROC_EX_DODGE))
             {
-                ToPlayer()->UpdateCombatSkills(target, attType, isVictim, procSpell ? procSpell->m_weaponItem : nullptr);
+                // procSpell->m_weaponItem is a raw Item* cached back at spell cast time
+                // (Spell::CheckCast) and can outlive the item itself across a delayed
+                // spell's travel time (SpellEvent::Execute) if the caster unequips,
+                // destroys, or swaps that weapon before the hit resolves - dereferencing
+                // it then is a use-after-free (crash seen in Item::IsBroken via
+                // Player::UpdateWeaponSkill). Only trust the cached pointer if it still
+                // matches one of the player's currently equipped weapon slots.
+                Item* weaponItem = procSpell ? procSpell->m_weaponItem : nullptr;
+                if (weaponItem)
+                {
+                    Player* player = ToPlayer();
+                    if (weaponItem != player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND) &&
+                        weaponItem != player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND) &&
+                        weaponItem != player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_RANGED))
+                    {
+                        weaponItem = nullptr;
+                    }
+                }
+                ToPlayer()->UpdateCombatSkills(target, attType, isVictim, weaponItem);
             }
             // Update defence if player is victim and we block - TODO: confirm that blocked attacks only have a chance to increase defence skill
             else if (isVictim && procExtra & (PROC_EX_BLOCK))
