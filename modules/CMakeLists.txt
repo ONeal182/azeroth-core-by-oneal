@@ -38,6 +38,7 @@ set("AC_SCRIPTS_LIST" "")
 set(MOD_ALE_FOUND 0)
 set(MOD_ALE_PATH "")
 set(MOD_PLAYERBOTS_FOUND 0)
+set(MOD_AH_BOT_PLUS_FOUND 0)
 
 foreach(include ${AC_ADD_SCRIPTS_INCLUDE})
   set("AC_SCRIPTS_INCLUDES" "#include \"${include}\"\n${AC_SCRIPTS_INCLUDES}")
@@ -90,6 +91,13 @@ foreach(SOURCE_MODULE ${MODULES_MODULE_LIST})
     target_compile_options(game-interface
       INTERFACE
         -DMOD_PLAYERBOTS)
+  endif()
+
+  # Lets other modules (mod-playerbot-auction-ai) detect mod-ah-bot-plus at
+  # compile time and call its MarketPriceService directly instead of running
+  # a second, independent pricing engine - same pattern as MOD_PLAYERBOTS above.
+  if (SOURCE_MODULE MATCHES "mod-ah-bot-plus")
+    set(MOD_AH_BOT_PLUS_FOUND 1)
   endif()
 
   # Build the Graph values
@@ -379,6 +387,12 @@ if (MOD_PLAYERBOTS_FOUND)
     target_compile_options(modules
             PRIVATE
             -DMOD_PLAYERBOTS)
+endif()
+
+if (MOD_AH_BOT_PLUS_FOUND)
+    target_compile_options(modules
+            PRIVATE
+            -DMOD_AH_BOT_PLUS)
 endif()
 
 if (MOD_ALE_FOUND)
